@@ -63,6 +63,7 @@ namespace Cubes_and_words
         //Загрузить словарь из текстового файла
         private void btn_LoadFromFile_Click(object sender, EventArgs e)
         {
+            listBox_dictionary.Items.Clear();
             var fileContent = string.Empty;
             var filePath = string.Empty;
 

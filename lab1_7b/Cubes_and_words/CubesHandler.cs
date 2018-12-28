@@ -44,9 +44,23 @@ namespace Cubes_and_words
             return new_list;
         }
 
+        //получаем слово с перестановки кубиков из массива А, а из 
+        //rep берем с повторениями под номером line
+        private string GetWord(int[] a, int line)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            for (int j = 0; j < count_cubes; j++)
+            {
+                sb.Append(cubes[a[j] - 1, rep[line, j]]);
+            }
+            return sb.ToString();
+        }
+
+        //запустить программу
         public int Run(ref List<string> res)
         {
-            int result = 0;
+            int result = 0;//количество слов, которые можно составить из кубиков
             words = Delete_words(words);//удаляем слова, которые точно не сможем составить
             GetRepeated();// записываем в матрицу размещения с повторениями
             int[] a = new int[count_cubes];
@@ -73,20 +87,33 @@ namespace Cubes_and_words
             return result;
         }
 
+        //количество размещений с повторениями
+        private int CountRep(int n)//size в n степени
+        {
+            int res = 1;
+            for (int i = 0; i < n; i++)
+            {
+                res *= size;
+            }
+            return res;
+        }
+
         //генерация размещений с повторениями,
         private static bool Next(ref int[,] a, int line, int m, int n)
         {
             int i = n - 1;
+            //убираем 5ки с концов
             while ((i >= 0) && (a[line - 1, i] == m - 1))
             {
                 a[line, i] = 0;
                 i--;
             }
+
             if (i >= 0)
             {
                 a[line, i] = a[line - 1, i] + 1;
                 i--;
-                //дописываем в новую строку оставшиеся из предыдущей строки
+                //дописываем в новую строку оставшиеся элементы из предыдущей строки
                 while (i >= 0)
                 {
                     a[line, i] = a[line - 1, i];
@@ -97,21 +124,10 @@ namespace Cubes_and_words
             return false;
         }
 
-        //количество размещений с повторениями
-        private int CountRep(int n)
-        {
-            int res = 1;
-            for (int i = 0; i < n; i++)
-            {
-                res *= size;
-            }
-            return res;
-        }
-
         //в массив rep заранее считаем все размещения с повторениями, который часто будем использовать
         private void GetRepeated()
         {
-            countCubPerm = CountRep(count_cubes);
+            countCubPerm = CountRep(count_cubes);//количество размещений с повторениями
             rep = new int[countCubPerm, count_cubes];
             int line = 1;
             while (line < countCubPerm)
@@ -134,6 +150,7 @@ namespace Cubes_and_words
             return t;
         }
 
+        //генерация следующей перестановки кубиков
         private static bool GetNextPerm(ref int[] a, int n, int m)
         {
             bool[] free = new bool[n];
@@ -143,7 +160,7 @@ namespace Cubes_and_words
                 free[i] = true;
             }
             for (i = 0; i < m; i++)
-            {
+            {   
                 free[a[i] - 1] = false;
             }
             i = m;
@@ -154,6 +171,7 @@ namespace Cubes_and_words
             }
             if (i == 0) return false;
             free[a[i - 1] - 1] = true;
+
             int q = GetFirstFree(ref free, a[i - 1]);
             free[q] = false;
             a[i - 1] = q + 1;
@@ -169,19 +187,6 @@ namespace Cubes_and_words
                 free[k - 1] = false;
             }
             return true;
-        }
-
-        //получаем слово с перестановки кубиков из массива А, а из 
-        //rep берем с повторениями под номером line
-        private string GetWord(int[] a, int line)
-        {
-            StringBuilder sb = new StringBuilder();
-
-            for (int j = 0; j < count_cubes; j++)
-            {
-                sb.Append(cubes[a[j] - 1, rep[line, j]]);
-            }
-            return sb.ToString();
         }
     }
 }
